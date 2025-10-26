@@ -1,0 +1,150 @@
+<div class="pollution-form-container">
+  <h2>Déclaration de Pollution</h2>
+
+  <form [formGroup]="pollutionForm" (ngSubmit)="onSubmit()" class="pollution-form">
+    <!-- Titre -->
+    <div class="form-group">
+      <label for="titre">Titre de la pollution *</label>
+      <input
+        id="titre"
+        type="text"
+        formControlName="titre"
+        class="form-control"
+        [class.error]="getFieldError('titre')"
+      />
+      @if (getFieldError('titre')) {
+        <div class="error-message">
+          {{ getFieldError('titre') }}
+        </div>
+      }
+    </div>
+
+    <!-- Type de pollution -->
+    <div class="form-group">
+      <label for="type">Type de pollution *</label>
+      <select id="type" formControlName="type" class="form-control" [class.error]="getFieldError('type')">
+        <option value="">Sélectionnez un type</option>
+        @for (type of pollutionTypes; track type) {
+          <option [value]="type">
+            {{ type }}
+          </option>
+        }
+      </select>
+      @if (getFieldError('type')) {
+        <div class="error-message">
+          {{ getFieldError('type') }}
+        </div>
+      }
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description">Description *</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="form-control"
+        rows="4"
+        [class.error]="getFieldError('description')"
+        placeholder="Décrivez la pollution observée..."
+      ></textarea>
+      @if (getFieldError('description')) {
+        <div class="error-message">
+          {{ getFieldError('description') }}
+        </div>
+      }
+    </div>
+
+    <!-- Date d'observation -->
+    <div class="form-group">
+      <label for="dateObservation">Date de l'observation *</label>
+      <input
+        id="dateObservation"
+        type="date"
+        formControlName="dateObservation"
+        class="form-control"
+        [class.error]="getFieldError('dateObservation')"
+      />
+      @if (getFieldError('dateObservation')) {
+        <div class="error-message">
+          {{ getFieldError('dateObservation') }}
+        </div>
+      }
+    </div>
+
+    <!-- Lieu -->
+    <div class="form-group">
+      <label for="lieu">Lieu *</label>
+      <input
+        id="lieu"
+        type="text"
+        formControlName="lieu"
+        class="form-control"
+        [class.error]="getFieldError('lieu')"
+        placeholder="Ex: Parc de la Villette, Paris"
+      />
+      @if (getFieldError('lieu')) {
+        <div class="error-message">
+          {{ getFieldError('lieu') }}
+        </div>
+      }
+    </div>
+
+    <!-- Coordonnées -->
+    <div class="coordinates-group">
+      <div class="form-group">
+        <label for="latitude">Latitude *</label>
+        <input
+          id="latitude"
+          type="text"
+          formControlName="latitude"
+          class="form-control"
+          [class.error]="getFieldError('latitude')"
+          placeholder="48.8566"
+        />
+        @if (getFieldError('latitude')) {
+          <div class="error-message">
+            {{ getFieldError('latitude') }}
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="longitude">Longitude *</label>
+        <input
+          id="longitude"
+          type="text"
+          formControlName="longitude"
+          class="form-control"
+          [class.error]="getFieldError('longitude')"
+          placeholder="2.3522"
+        />
+        @if (getFieldError('longitude')) {
+          <div class="error-message">
+            {{ getFieldError('longitude') }}
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Photo URL -->
+    <div class="form-group">
+      <label for="photoUrl">Photo (URL)</label>
+      <input
+        id="photoUrl"
+        type="url"
+        formControlName="photoUrl"
+        class="form-control"
+        placeholder="https://exemple.com/photo.jpg"
+      />
+      <small class="form-hint">Optionnel - URL vers une photo de la pollution</small>
+    </div>
+
+    <!-- Bouton de soumission -->
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="pollutionForm.invalid">
+        {{ submitLabel || 'Déclarer' }}
+      </button>
+    </div>
+  </form>
+</div>

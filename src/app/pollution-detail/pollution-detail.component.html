@@ -1,0 +1,27 @@
+<div class="pollution-detail" *ngIf="pollution() as p; else empty">
+  <app-pollution-recap [declaration]="p"></app-pollution-recap>
+
+  <div class="actions">
+    <button class="btn btn-secondary" (click)="back()" aria-label="Retour">Retour</button>
+    <button class="btn btn-warning" (click)="startEdit()" aria-label="Éditer">Éditer</button>
+    <button class="btn btn-danger" (click)="delete()" aria-label="Supprimer">Supprimer</button>
+  </div>
+
+  <div *ngIf="editing">
+    <h3>Édition rapide</h3>
+    <app-pollution-form
+      [initial]="pollution()"
+      [submitLabel]="'Enregistrer'"
+      [loading]="updating"
+      (formSubmitted)="submitInlineUpdate($event)"
+    ></app-pollution-form>
+    <div style="margin-top: 0.5rem">
+      <button (click)="cancelEdit()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<ng-template #empty>
+  <p>Pollution introuvable.</p>
+  <button (click)="back()">Retour</button>
+</ng-template>

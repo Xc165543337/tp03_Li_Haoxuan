@@ -1,0 +1,18 @@
+<div class="app-container">
+  <header class="app-header">
+    <h1>{{ title() }}</h1>
+  </header>
+  <main class="app-main">
+    <nav style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem">
+      <a class="nav-link" routerLink="/">Liste</a>
+      <a class="nav-link" routerLink="/create">Nouvelle déclaration</a>
+    </nav>
+
+    <!-- Router outlet for list/detail/edit pages -->
+    <router-outlet></router-outlet>
+
+    <!-- debug panel removed for production/development cleanup -->
+  </main>
+
+  <app-toast-container></app-toast-container>
+</div>

@@ -1,0 +1,149 @@
+.app-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  h1 {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 300;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    margin: 0;
+
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+.app-main {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.action-buttons {
+  margin-top: 2rem;
+  text-align: center;
+
+  .btn {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &.btn-secondary {
+      background-color: #6c757d;
+      color: white;
+
+      &:hover {
+        background-color: #5a6268;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+      }
+    }
+  }
+}
+
+/* small per-component .btn styles are defined later to match the theme */
+
+/* Header navigation links */
+.nav-link {
+  display: inline-block;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.95);
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.18s ease;
+  font-weight: 600;
+}
+
+.nav-link:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.nav-link:active {
+  transform: translateY(0);
+}
+
+/* active nav link provided by router (routerLinkActive adds this class) */
+.nav-link.router-link-active,
+.nav-link.active {
+  background: #ffffff;
+  color: #5b2b9b;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  transform: translateY(-2px);
+}
+
+/* Button visual polish to match the purple gradient theme */
+.btn {
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.04),
+    0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #6c5ce7, #8e44ff);
+  border: none;
+  color: white;
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #4aa3e8, #2b8fe7);
+  border: none;
+  color: #fff;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #ffd166, #f1c40f);
+  border: none;
+  color: #222;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ff7b7b, #e74c3c);
+  border: none;
+  color: #fff;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.btn:focus {
+  outline: 3px solid rgba(255, 255, 255, 0.08);
+  outline-offset: 2px;
+}
+
+/* Global responsive adjustments */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 1rem 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-container {
+    padding: 0.5rem 0.25rem;
+  }
+}

@@ -1,0 +1,103 @@
+@if (declaration) {
+  <div class="recap-container">
+    <div class="recap-header">
+      <h2>Récapitulatif de la Déclaration</h2>
+      <div class="success-badge">
+        <span class="check-icon">✓</span>
+        Déclaration enregistrée avec succès
+      </div>
+    </div>
+
+    <div class="recap-content">
+      <!-- Informations principales -->
+      <div class="info-section">
+        <h3>Informations générales</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Titre :</span>
+            <span class="value">{{ declaration.titre }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="label">Type de pollution :</span>
+            <span class="value type-badge" [class]="'type-' + declaration.type.toLowerCase().replace(' ', '-')">
+              {{ declaration.type }}
+            </span>
+          </div>
+
+          <div class="info-item">
+            <span class="label">Date d'observation :</span>
+            <span class="value">{{ formatDate(declaration.dateObservation) }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="label">Lieu :</span>
+            <span class="value">{{ declaration.lieu }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="info-section">
+        <h3>Description</h3>
+        <div class="description-box">
+          {{ declaration.description }}
+        </div>
+      </div>
+
+      <!-- Localisation -->
+      <div class="info-section">
+        <h3>Localisation</h3>
+        <div class="location-info">
+          <div class="coordinates">
+            <span class="label">Coordonnées GPS :</span>
+            <span class="value">{{ formatCoordinates(declaration.latitude, declaration.longitude) }}</span>
+          </div>
+          <div class="coordinates-detail">
+            <div class="coord-item">
+              <span class="coord-label">Latitude :</span>
+              <span class="coord-value">{{ declaration.latitude }}</span>
+            </div>
+            <div class="coord-item">
+              <span class="coord-label">Longitude :</span>
+              <span class="coord-value">{{ declaration.longitude }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Photo (si fournie) -->
+      @if (declaration.photoUrl) {
+        <div class="info-section">
+          <h3>Photo</h3>
+          <div class="photo-container">
+            <img
+              [src]="declaration.photoUrl"
+              [alt]="'Pollution: ' + declaration.titre"
+              class="pollution-photo"
+              (error)="$event.target.style.display = 'none'"
+            />
+            <div class="photo-url">
+              <span class="label">URL :</span>
+              <a [href]="declaration.photoUrl" target="_blank" class="photo-link">
+                {{ declaration.photoUrl }}
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Actions futures (placeholder) -->
+    <div class="recap-footer">
+      <div class="next-steps">
+        <h4>Prochaines étapes</h4>
+        <ul>
+          <li>Votre déclaration sera transmise aux autorités compétentes</li>
+          <li>Un numéro de suivi vous sera attribué par email</li>
+          <li>Vous serez informé(e) des actions entreprises</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+}

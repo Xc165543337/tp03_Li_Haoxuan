@@ -1,0 +1,65 @@
+<div class="pollution-list">
+  <h2>Liste des pollutions</h2>
+
+  <div class="controls">
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center">
+      <input type="text" placeholder="Recherche texte" [(ngModel)]="filter" class="form-control" />
+
+      <select [(ngModel)]="typeFilter" class="form-control">
+        <option value="">Tous les types</option>
+        <option *ngFor="let t of pollutionTypes" [value]="t">{{ t }}</option>
+      </select>
+
+      <label style="font-size: 0.9rem">Du</label>
+      <input type="date" [(ngModel)]="dateFrom" class="form-control" />
+      <label style="font-size: 0.9rem">Au</label>
+      <input type="date" [(ngModel)]="dateTo" class="form-control" />
+
+      <label style="font-size: 0.9rem">Par page</label>
+      <select [(ngModel)]="pageSize" class="form-control">
+        <option [value]="5">5</option>
+        <option [value]="10">10</option>
+        <option [value]="20">20</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="filtered.length === 0">
+    <p>Aucune pollution trouvée.</p>
+  </div>
+
+  <table *ngIf="filtered.length > 0" class="pollution-table">
+    <thead>
+      <tr>
+        <th>Titre</th>
+        <th>Type</th>
+        <th>Date</th>
+        <th>Lieu</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of paginated">
+        <td>{{ p.titre }}</td>
+        <td>{{ p.type }}</td>
+        <td>{{ p.dateObservation }}</td>
+        <td>{{ p.lieu }}</td>
+        <td class="actions">
+          <button class="btn btn-info" aria-label="Voir {{ p.titre }}" (click)="viewDetail(p.id)">Voir</button>
+          <button class="btn btn-warning" aria-label="Éditer {{ p.titre }}" (click)="viewEdit(p.id)">Éditer</button>
+          <button class="btn btn-danger" aria-label="Supprimer {{ p.titre }}" (click)="delete(p.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div
+    *ngIf="filtered.length > 0"
+    class="pagination"
+    style="margin-top: 1rem; display: flex; gap: 0.5rem; align-items: center"
+  >
+    <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Préc</button>
+    <span>Page {{ currentPage }} / {{ pageCount }}</span>
+    <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === pageCount">Suiv</button>
+  </div>
+</div>

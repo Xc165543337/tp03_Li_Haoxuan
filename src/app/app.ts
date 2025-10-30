@@ -3,7 +3,7 @@ import { Component, signal } from '@angular/core'
 import { RouterLink, RouterOutlet } from '@angular/router'
 import { PollutionDeclaration } from './models/pollution.model'
 // Pollution form and recap are standalone components used by routes; not imported at root
-import { ToastContainerComponent } from './toast-container.component'
+import { ToastContainerComponent } from './toast/toast-container.component'
 
 @Component({
   selector: 'app-root',

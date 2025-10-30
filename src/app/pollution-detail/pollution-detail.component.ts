@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common'
 import { Component, inject, signal } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
+import { PollutionDeclaration } from '../models/pollution.model'
 import { PollutionFormComponent } from '../pollution-form/pollution-form.component'
 import { PollutionRecapComponent } from '../pollution-recap/pollution-recap.component'
-import { RefreshService } from '../refresh.service'
 import { PollutionService, PollutionWithId } from '../services/pollution.service'
-import { ToastService } from '../toast.service'
+import { RefreshService } from '../services/refresh.service'
+import { ToastService } from '../services/toast.service'
 
 @Component({
   selector: 'app-pollution-detail',
@@ -27,42 +28,37 @@ export class PollutionDetailComponent {
 
   constructor() {
     // respond to route param changes (works when navigating within SPA and when reusing component)
-    // Use console.log (visible) to ensure messages appear in the devtools console
-    // eslint-disable-next-line no-console
-    console.log('[PollutionDetail] constructor, subscribing to params')
-    this.route.paramMap.subscribe(pm => {
-      // eslint-disable-next-line no-console
-      console.log('[PollutionDetail] paramMap emission', pm.keys, pm.get('id'))
-      const raw = pm.get('id')
-      const id = raw ? Number(raw) : NaN
-      if (!Number.isNaN(id) && id > 0) {
-        this.load(id)
-      } else {
-        this.pollution.set(null)
-      }
+    // Use console.warn to surface lifecycle messages in devtools
+    console.warn('[PollutionDetail] constructor, subscribing to params')
+    this.route.paramMap.subscribe({
+      next: pm => {
+        console.warn('[PollutionDetail] paramMap emission', pm.keys, pm.get('id'))
+        const raw = pm.get('id')
+        const id = raw ? Number(raw) : Number.NaN
+        if (!Number.isNaN(id) && id > 0) {
+          this.load(id)
+        } else {
+          this.pollution.set(null)
+        }
+      },
+      error: err => {
+        console.error('[PollutionDetail] paramMap error', err)
+      },
     })
   }
 
   load(id: number): void {
-    try {
-      // eslint-disable-next-line no-console
-      console.debug('[PollutionDetail] load id', id)
-    } catch {}
-    this.service.getById(id).subscribe(
-      p => {
-        try {
-          // eslint-disable-next-line no-console
-          console.debug('[PollutionDetail] loaded', p)
-        } catch {}
+    console.warn('[PollutionDetail] load id', id)
+    this.service.getById(id).subscribe({
+      next: p => {
+        console.warn('[PollutionDetail] loaded', p)
         this.pollution.set(p)
       },
-      err => {
-        try {
-          console.error('[PollutionDetail] load error', err)
-        } catch {}
+      error: err => {
+        console.error('[PollutionDetail] load error', err)
         this.pollution.set(null)
-      }
-    )
+      },
+    })
   }
 
   back(): void {
@@ -73,14 +69,14 @@ export class PollutionDetailComponent {
     const id = this.pollution()?.id
     if (!id) return
     if (!confirm('Supprimer cette pollution ?')) return
-    this.service.delete(id).subscribe(
-      () => {
+    this.service.delete(id).subscribe({
+      next: () => {
         this.toast.success('Pollution supprimée')
         this.refresh.refresh()
         this.back()
       },
-      () => this.toast.error('Erreur lors de la suppression')
-    )
+      error: () => this.toast.error('Erreur lors de la suppression'),
+    })
   }
 
   startEdit(): void {
@@ -91,21 +87,21 @@ export class PollutionDetailComponent {
     this.editing = false
   }
 
-  submitInlineUpdate(payload: any): void {
+  submitInlineUpdate(payload: PollutionDeclaration): void {
     const id = this.pollution()?.id
     if (!id) return
     this.updating = true
-    this.service.update(id, payload).subscribe(
-      p => {
+    this.service.update(id, payload).subscribe({
+      next: () => {
         this.updating = false
         this.editing = false
         this.toast.success('Mise à jour enregistrée')
         this.load(id)
       },
-      () => {
+      error: () => {
         this.updating = false
         this.toast.error('Erreur lors de la mise à jour')
-      }
-    )
+      },
+    })
   }
 }

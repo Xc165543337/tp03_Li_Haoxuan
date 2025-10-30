@@ -7,7 +7,7 @@ import {
 import { provideRouter } from '@angular/router'
 
 import { routes } from './app.routes'
-import { MOCK_BACKEND_PROVIDER } from './mock-backend.interceptor'
+import { MOCK_BACKEND_PROVIDER } from './backend/mock-backend.interceptor'
 
 export const appConfig: ApplicationConfig = {
   providers: [

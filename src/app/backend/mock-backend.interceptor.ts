@@ -9,7 +9,7 @@ import {
 import { Injectable } from '@angular/core'
 import { Observable, of } from 'rxjs'
 import { delay } from 'rxjs/operators'
-import { PollutionDeclaration } from './models/pollution.model'
+import { PollutionDeclaration } from '../models/pollution.model'
 
 interface StoredPollution extends PollutionDeclaration {
   id: number
@@ -63,6 +63,9 @@ function loadStore(): StoredPollution[] {
     }
     return JSON.parse(raw)
   } catch (e) {
+    // If reading/parsing localStorage fails, log and return an empty store
+
+    console.error('[MockBackend] failed to load store', e)
     return []
   }
 }
@@ -73,14 +76,12 @@ function saveStore(items: StoredPollution[]): void {
 
 @Injectable()
 export class MockBackendInterceptor implements HttpInterceptor {
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const { url, method } = req
 
     // debug: log requests the mock backend sees (temporary)
-    try {
-      // eslint-disable-next-line no-console
-      console.debug('[MockBackend] request', { method, url })
-    } catch {}
+    // use console.warn to satisfy lint rules about allowed console methods
+    console.warn('[MockBackend] request', { method, url })
 
     // only handle our api path (accept plural and singular to tolerate mismatches)
     if (!url.includes('/pollutions') && !url.includes('/pollution')) {
@@ -88,12 +89,16 @@ export class MockBackendInterceptor implements HttpInterceptor {
     }
 
     // normalize path without query/hash to correctly extract id segment
-    let path = url
+    let path: string
     try {
       // works for absolute and relative URLs
       path = new URL(url, location.origin).pathname
-    } catch {
+    } catch (err) {
       // fallback: strip query/hash if URL constructor fails
+      console.warn(
+        '[MockBackend] URL parsing failed, falling back to raw URL',
+        (err as Error)?.message
+      )
       path = url.split('?')[0].split('#')[0]
     }
     const segments = path.split('/').filter(Boolean)
@@ -103,33 +108,26 @@ export class MockBackendInterceptor implements HttpInterceptor {
     const store = loadStore()
 
     // small artificial delay to simulate network
-    const respond = (body: any, status = 200) =>
+    type RespondBody = StoredPollution | StoredPollution[] | { message: string } | null
+    const respond = (body: RespondBody, status = 200) =>
       of(new HttpResponse({ status, body })).pipe(delay(300))
 
     if (method === 'GET' && isCollectionPath(path)) {
-      try {
-        // eslint-disable-next-line no-console
-        console.debug('[MockBackend] matched COLLECTION GET ->', {
-          path,
-          storeLength: store.length,
-        })
-        // debug info removed (mock_last_request) to clean production output
-      } catch {}
+      // debug logging
+
+      console.warn('[MockBackend] matched COLLECTION GET ->', { path, storeLength: store.length })
       return respond(store)
     }
 
     if (method === 'GET' && id) {
-      try {
-        // eslint-disable-next-line no-console
-        console.debug('[MockBackend] matched ITEM GET ->', { id })
-      } catch {}
+      console.warn('[MockBackend] matched ITEM GET ->', { id })
       const item = store.find(s => s.id === id)
       if (!item) return respond({ message: 'Not found' }, 404)
       return respond(item)
     }
 
     if (method === 'POST' && isCollectionPath(path)) {
-      const payload: PollutionDeclaration = req.body
+      const payload = req.body as PollutionDeclaration
       const nextId = store.length ? Math.max(...store.map(s => s.id)) + 1 : 1
       const created: StoredPollution = { id: nextId, ...payload }
       store.push(created)
@@ -138,7 +136,7 @@ export class MockBackendInterceptor implements HttpInterceptor {
     }
 
     if (method === 'PUT' && id) {
-      const payload: PollutionDeclaration = req.body
+      const payload = req.body as PollutionDeclaration
       const idx = store.findIndex(s => s.id === id)
       if (idx === -1) return respond({ message: 'Not found' }, 404)
       store[idx] = { id, ...payload }

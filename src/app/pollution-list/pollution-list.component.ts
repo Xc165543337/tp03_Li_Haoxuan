@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms'
 import { Router } from '@angular/router'
 import { POLLUTION_TYPES } from '../models/pollution.model'
 import { PollutionService, PollutionWithId } from '../services/pollution.service'
-import { ToastService } from '../toast.service'
+import { ToastService } from '../services/toast.service'
 
 @Component({
   selector: 'app-pollution-list',
@@ -66,10 +66,8 @@ export class PollutionListComponent {
   }
 
   viewDetail(id: number): void {
-    try {
-      // eslint-disable-next-line no-console
-      console.log('[PollutionList] navigate to', id)
-    } catch {}
+    // eslint-disable-next-line no-console
+    console.log('[PollutionList] navigate to', id)
     this.router.navigate(['pollution', id])
   }
 
@@ -79,8 +77,8 @@ export class PollutionListComponent {
 
   delete(id: number): void {
     if (!confirm('Voulez-vous supprimer cette pollution ?')) return
-    this.service.delete(id).subscribe(
-      () => {
+    this.service.delete(id).subscribe({
+      next: () => {
         this.toast.success('Pollution supprimée')
         // if last item on page was removed, go back a page
         const after = this.filtered.length - 1
@@ -88,8 +86,8 @@ export class PollutionListComponent {
         if (this.currentPage > pagesAfter) this.currentPage = pagesAfter
         this.load()
       },
-      () => this.toast.error('Erreur lors de la suppression')
-    )
+      error: () => this.toast.error('Erreur lors de la suppression'),
+    })
   }
 
   goToPage(n: number) {

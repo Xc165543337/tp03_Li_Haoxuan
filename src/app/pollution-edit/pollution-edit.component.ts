@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common'
 import { Component, inject } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
+import { PollutionDeclaration } from '../models/pollution.model'
 import { PollutionFormComponent } from '../pollution-form/pollution-form.component'
-import { RefreshService } from '../refresh.service'
-import { PollutionService } from '../services/pollution.service'
-import { ToastService } from '../toast.service'
+import { PollutionService, PollutionWithId } from '../services/pollution.service'
+import { RefreshService } from '../services/refresh.service'
+import { ToastService } from '../services/toast.service'
 
 @Component({
   selector: 'app-pollution-edit',
@@ -30,7 +31,7 @@ export class PollutionEditComponent {
 
   loading = false
 
-  pollution: any | null = null
+  pollution: PollutionWithId | null = null
 
   constructor() {
     const id = Number(this.route.snapshot.paramMap.get('id'))
@@ -38,25 +39,28 @@ export class PollutionEditComponent {
   }
 
   load(id: number) {
-    this.service.getById(id).subscribe(p => (this.pollution = p))
+    this.service.getById(id).subscribe({
+      next: p => (this.pollution = p),
+      error: err => console.error('Error loading pollution', err),
+    })
   }
 
-  onSubmitted(payload: any) {
+  onSubmitted(payload: PollutionDeclaration) {
     const id = this.pollution?.id
     if (!id) return
     this.loading = true
-    this.service.update(id, payload).subscribe(
-      () => {
+    this.service.update(id, payload).subscribe({
+      next: () => {
         this.loading = false
         this.toast.success('Mise à jour enregistrée')
         this.refresh.refresh()
         this.router.navigate(['pollution', id])
       },
-      err => {
+      error: err => {
         console.error('Error updating pollution', err)
         this.loading = false
         this.toast.error('Erreur lors de la mise à jour')
-      }
-    )
+      },
+    })
   }
 }

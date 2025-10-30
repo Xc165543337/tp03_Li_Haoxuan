@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common'
 import { Component, inject } from '@angular/core'
 import { Router } from '@angular/router'
+import { PollutionDeclaration } from '../models/pollution.model'
 import { PollutionFormComponent } from '../pollution-form/pollution-form.component'
-import { RefreshService } from '../refresh.service'
 import { PollutionService } from '../services/pollution.service'
-import { ToastService } from '../toast.service'
+import { RefreshService } from '../services/refresh.service'
+import { ToastService } from '../services/toast.service'
 
 @Component({
   selector: 'app-pollution-create',
@@ -23,20 +24,20 @@ export class PollutionCreateComponent {
 
   loading = false
 
-  onSubmitted(payload: any) {
+  onSubmitted(payload: PollutionDeclaration) {
     this.loading = true
-    this.service.create(payload).subscribe(
-      () => {
+    this.service.create(payload).subscribe({
+      next: () => {
         this.loading = false
         this.toast.success('Pollution enregistrée')
         this.refresh.refresh()
         this.router.navigate([''])
       },
-      err => {
+      error: err => {
         console.error('Error creating pollution', err)
         this.loading = false
         this.toast.error("Impossible d'enregistrer la pollution")
-      }
-    )
+      },
+    })
   }
 }
